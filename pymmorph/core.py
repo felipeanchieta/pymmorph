@@ -1,10 +1,23 @@
 import cv2
 import numpy as np
 import PIL
+from matplotlib import pyplot as plt
 
+
+CROSS=np.matrix('0 1 0; 1 1 1; 0 1 0', np.uint8)
 
 def mmaddm(f1, f2):
-    pass
+    kmax = 1.0
+    res = np.matrix(f1.shape)
+
+    print(res.shape)
+
+    it = np.nditer([f1, f2, res])
+    for el in it:
+        el[3] = min(kmax, el[0] + el[1])
+
+    print(res)
+    return []
 
 
 def mmareaclose(f, a, Bc):
@@ -15,23 +28,30 @@ def mmareaopen(f, a, Bc):
     pass
 
 
-def mmasf(f, seq, b, n):
-    pass
+def mmasf(f, seq='OC', b=CROSS, n=1):
+    """Alternating Sequential Filtering."""
+    f_ = f.copy()
+    for op in seq:
+        if op == 'O' or op == 'o':
+            f_ = mmopen(f_, b)
+        elif op == 'C' or op == 'c':
+            f_ = mmclose(f_, b)
+        else:
+            pass
+
+    return f_
 
 
 def mmasfrec(f, seq, b, bc, n):
     pass
 
 
-def mmbench(count):
-    pass
+def mmbinary(f, k):
+    """Convert a gray-scale image into a binary image""" 
+    return cv2.threshold(f, k, 255, cv2.THRESH_BINARY)[1] 
+    
 
-
-def mmbinary(f, k1):
-    pass
-
-
-def mmblob(fr, measurement, option):
+def mmblob(fr, measurement, option): 
     pass
 
 
@@ -59,8 +79,9 @@ def mmclohole(f, Bc):
     pass
 
 
-def mmclose(f, b):
-    pass
+def mmclose(f, b=CROSS):
+    """Morphological closing."""
+    return cv2.morphologyEx(f, cv2.MORPH_CLOSE, b)
 
 
 def mmcloserec(f, bdil, bc):
@@ -171,8 +192,9 @@ def mmdholecenter():
     pass
 
 
-def mmdil():
-    pass
+def mmdil(f, b=CROSS):
+    """Dilate an image by a structuring element."""
+    return cv2.dilate(f, b) 
 
 
 def mmdist():
@@ -239,8 +261,9 @@ def mmendpoints():
     pass
 
 
-def mmero():
-    pass
+def mmero(f, b=CROSS):
+    """Erode an image by a structuring element."""
+    return cv2.erode(f, b) 
 
 
 def mmflood():
@@ -252,7 +275,13 @@ def mmfractal():
 
 
 def mmframe():
-    pass
+    last_line = f.shape[0] - 1
+    last_column = f.shape[1] - 1
+
+    return [
+        [k1 if i == 0 or i == last_line or j == 0 or j == last_column else k2 for j in range(f.shape[1])]
+        for i in range(f.shape[0])
+        ]
 
 
 def mmfreedom():
@@ -275,8 +304,9 @@ def mmgrain():
     pass
 
 
-def mmgray():
-    pass
+def mmgray(f):
+    """Convert a binary image into a gray-scale image."""
+    return [255 if item == 1 else 0 for item in f]
 
 
 def mmgshow():
@@ -331,10 +361,6 @@ def mminpos():
     pass
 
 
-def mmintcode():
-    pass
-
-
 def mminterot():
     pass
 
@@ -379,19 +405,7 @@ def mmlblshow():
     pass
 
 
-def mmlicensecode():
-    pass
-
-
-def mmlicensedays():
-    pass
-
-
 def mmlimits():
-    pass
-
-
-def mmmachinecode():
     pass
 
 
@@ -471,12 +485,18 @@ def mmmaxtree():
     pass
 
 
-def mmneg():
-    pass
+def mmneg(f):
+    if f.dtype == 'uint8':
+        k = 255
+    else:
+        k = 65535
+
+    return [k - el for el in f]
 
 
-def mmopen():
-    pass
+def mmopen(f, b=CROSS):
+    """Morphological opening."""
+    return cv2.morphologyEx(f, cv2.MORPH_OPEN, b) 
 
 
 def mmopenrec():
@@ -487,8 +507,8 @@ def mmopenrecth():
     pass
 
 
-def mmopenth():
-    pass
+def mmopenth(f, b=CROSS):
+    return cv2.morphologyEx(f, cv2.MORPH_TOPHAT, b)
 
 
 def mmopentransf():
@@ -499,8 +519,9 @@ def mmpatspec():
     pass
 
 
-def mmreadgray():
-    pass
+def mmreadgray(filename):
+    """Read an image from a commercial file format and stores it as a gray-scale image."""
+    return cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
 
 
 def mmregmax():
@@ -563,8 +584,9 @@ def mmseunion():
     pass
 
 
-def mmshow():
-    pass
+def mmshow(f):
+    plt.imshow(f, 'gray')
+    plt.show()
 
 
 def mmskelm():
@@ -623,7 +645,7 @@ def mmthin():
     pass
 
 
-def mmthreshad():
+def mmthreshad(f, f1, f2):
     pass
 
 
@@ -644,7 +666,8 @@ def mmvdome():
 
 
 def mmversion():
-    pass
+    """SDC Morphology Toolbox version."""
+    return "SDC Morphology Toolbox for Python v0.1" 
 
 
 def mmvmax():
@@ -659,5 +682,7 @@ def mmwatershed():
     pass
 
 
-def mmwrite():
-    pass
+def mmwrite(f, filename):
+    """Write a gray-scale image into a commercial file format."""
+    cv2.imwrite(filename, f)
+
