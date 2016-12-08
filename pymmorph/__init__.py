@@ -1,1 +1,1 @@
-__name__ = 'pymmorph'
+from .core import *

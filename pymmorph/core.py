@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 
 CROSS=np.matrix('0 1 0; 1 1 1; 0 1 0', np.uint8)
 
+
 def mmaddm(f1, f2):
     kmax = 1.0
     res = np.matrix(f1.shape)
@@ -296,8 +297,8 @@ def mmglblshow():
     pass
 
 
-def mmgradm():
-    pass
+def mmgradm(f, Bdil=CROSS, Bero=CROSS):
+    return cv2.morphologyEx(f, cv2.MORPH_GRADIENT, Bdil)
 
 
 def mmgrain():
@@ -540,8 +541,8 @@ def mmse2interval():
     pass
 
 
-def mmsebox():
-    pass
+def mmsebox(radius=1):
+    return np.ones((2 * radius + 1, 2 * radius + 1), np.uint8)
 
 
 def mmsecross():
@@ -645,16 +646,16 @@ def mmthin():
     pass
 
 
-def mmthreshad(f, f1, f2):
-    pass
-
+def mmthreshad(f, level):
+    """Adapted"""
+    return [255 if pixel.any() > level else 0 for pixel in np.squeeze(np.asarray(f))] 
 
 def mmtoggle():
     pass
 
 
-def mmunion():
-    pass
+def mmunion(f1, f2, *frest):
+    return cv2.bitwise_or(f1, f2)
 
 
 def mmvbasin():
