@@ -9,7 +9,9 @@ Computer Science students and other hackers.
 
 This software is licensed by MIT License.
 
-How to Use
-----------
+How to Install
+--------------
 
-Just import and use the methods. All of 'em are static.
+As usual, just execute the following line in this directory:
+
+>>> python setup.py install
